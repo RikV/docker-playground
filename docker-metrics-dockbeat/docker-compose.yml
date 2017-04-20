@@ -1,0 +1,27 @@
+version: "2"
+services:
+  elasticsearch:
+    image: elasticsearch
+    ports: 
+      - "9200:9200"
+    volumes:
+      - "/tmp/elasticsearch:/usr/share/elasticsearch/data"  # <--- Change Me!!
+  dockbeat:
+    build: ./dockbeat
+    environment:
+      - "DOCKER_SOCKET=unix:///var/run/docker.sock" 
+      - "PERIOD=10"
+    links: 
+      - elasticsearch
+    volumes: 
+      - "/var/run/docker.sock:/var/run/docker.sock"
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    links:
+      - elasticsearch
+    environment:
+      - "GF_SECURITY_ADMIN_PASSWORD=admin"
+    volumes:
+      - "/tmp/grafana:/var/lib/grafana" # <-- Change Me!!
