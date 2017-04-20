@@ -1,0 +1,31 @@
+version: '2'
+services:
+  elasticsearch:
+    build: ./elasticsearch
+    environment:
+      - TZ='Europe/Rome'
+    volumes:
+      - "/tmp/esdata:/usr/share/elasticsearch/data"
+    ports:
+      - "9200:9200"
+  kibana:
+    build: ./kibana
+    links:
+     - elasticsearch
+    depends_on:
+     - elasticsearch
+    environment:
+      - TZ='Europe/Rome'
+    ports:
+      - "5601:5601"
+  logstash:
+    build: ./logstash
+    links:
+     - elasticsearch
+    depends_on:
+     - elasticsearch
+    ports:
+     - "9000:9000"
+    environment:
+      - TZ='Europe/Rome'
+      - LS_HEAP_SIZE=8g
